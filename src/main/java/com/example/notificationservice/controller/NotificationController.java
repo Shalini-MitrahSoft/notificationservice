@@ -19,31 +19,32 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @PostMapping
-    public ResponseEntity<NotificationResponse> createNotification(
-            @Valid @RequestBody NotificationRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(notificationService.createNotification(request));
+    public ResponseEntity<NotificationResponse> createNotification(@Valid @RequestBody NotificationRequest request) {
+        NotificationResponse response = notificationService.createNotification(request);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<NotificationResponse> getNotification(@PathVariable Long id) {
-        return ResponseEntity.ok(notificationService.getNotification(id));
+        NotificationResponse response = notificationService.getNotification(id);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<NotificationResponse>> getCustomerNotifications(
-            @RequestParam Long customerId) {
-        return ResponseEntity.ok(notificationService.getCustomerNotifications(customerId));
+    public ResponseEntity<List<NotificationResponse>> getCustomerNotifications(@RequestParam Long customerId) {
+        List<NotificationResponse> responses = notificationService.getCustomerNotifications(customerId);
+        return ResponseEntity.ok(responses);
     }
 
     @PutMapping("/{id}/read")
     public ResponseEntity<NotificationResponse> markAsRead(@PathVariable Long id) {
-        return ResponseEntity.ok(notificationService.markAsRead(id));
+        NotificationResponse response = notificationService.markAsRead(id);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/read-all")
-    public ResponseEntity<List<NotificationResponse>> markAllAsRead(
-            @RequestParam Long customerId) {
-        return ResponseEntity.ok(notificationService.markAllAsRead(customerId));
+    public ResponseEntity<List<NotificationResponse>> markAllAsRead(@RequestParam Long customerId) {
+        List<NotificationResponse> responses = notificationService.markAllAsRead(customerId);
+        return ResponseEntity.ok(responses);
     }
 }

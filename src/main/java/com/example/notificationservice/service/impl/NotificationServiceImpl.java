@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,16 +24,16 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional
     public NotificationResponse createNotification(NotificationRequest request) {
-        Notification notification = Notification.builder()
-                .customerId(request.getCustomerId())
-                .orderId(request.getOrderId())
-                .type(request.getType())
-                .title(request.getTitle())
-                .message(request.getMessage())
-                .isRead(false)
-                .build();
+        Notification notification = new Notification();
+        notification.setCustomerId(request.getCustomerId());
+        notification.setOrderId(request.getOrderId());
+        notification.setType(request.getType());
+        notification.setTitle(request.getTitle());
+        notification.setMessage(request.getMessage());
+        notification.setIsRead(false);
 
-        return mapToResponse(notificationRepository.save(notification));
+        Notification savedNotification = notificationRepository.save(notification);
+        return mapToResponse(savedNotification);
     }
 
     @Override
@@ -44,10 +45,14 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional(readOnly = true)
     public List<NotificationResponse> getCustomerNotifications(Long customerId) {
-        return notificationRepository.findByCustomerIdOrderByCreatedAtDesc(customerId)
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
+        List<Notification> notifications = notificationRepository.findByCustomerIdOrderByCreatedAtDesc(customerId);
+        List<NotificationResponse> responses = new ArrayList<>();
+
+        for (Notification notification : notifications) {
+            responses.add(mapToResponse(notification));
+        }
+
+        return responses;
     }
 
     @Override
@@ -55,21 +60,24 @@ public class NotificationServiceImpl implements NotificationService {
     public NotificationResponse markAsRead(Long id) {
         Notification notification = findNotification(id);
         notification.setIsRead(true);
-        return mapToResponse(notificationRepository.save(notification));
+
+        Notification updatedNotification = notificationRepository.save(notification);
+        return mapToResponse(updatedNotification);
     }
 
     @Override
     @Transactional
     public List<NotificationResponse> markAllAsRead(Long customerId) {
-        List<Notification> notifications =
-                notificationRepository.findByCustomerIdOrderByCreatedAtDesc(customerId);
+        List<Notification> notifications = notificationRepository.findByCustomerIdOrderByCreatedAtDesc(customerId);
+        List<NotificationResponse> responses = new ArrayList<>();
 
-        notifications.forEach(notification -> notification.setIsRead(true));
+        for (Notification notification : notifications) {
+            notification.setIsRead(true);
+            Notification updatedNotification = notificationRepository.save(notification);
+            responses.add(mapToResponse(updatedNotification));
+        }
 
-        return notificationRepository.saveAll(notifications)
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
+        return responses;
     }
 
     private Notification findNotification(Long id) {
