@@ -14,12 +14,20 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NotificationResponse {
+
     private Long id;
+
     private Long customerId;
+
     private Long orderId;
+
     private String type;
+
     private String title;
+
     private String message;
+
     private Boolean isRead;
+
     private LocalDateTime createdAt;
 }

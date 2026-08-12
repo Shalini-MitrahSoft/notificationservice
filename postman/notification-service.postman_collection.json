@@ -1,0 +1,108 @@
+{
+  "info": {
+    "_postman_id": "8d4f7c8f-9f10-4d84-9a0a-2f2c2c5e7d31",
+    "name": "Notification Service API",
+    "description": "Postman collection for the Notification Service controller endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Notification",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customerId\": 101,\n  \"orderId\": 5001,\n  \"type\": \"ORDER_PLACED\",\n  \"title\": \"Order placed successfully\",\n  \"message\": \"Your order #5001 has been placed.\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}"
+        },
+        "description": "Create a new notification for a customer."
+      }
+    },
+    {
+      "name": "Get Notification By Id",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/{{notificationId}}"
+        },
+        "description": "Fetch a single notification by its ID."
+      }
+    },
+    {
+      "name": "Get Customer Notifications",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}?customerId={{customerId}}",
+          "query": [
+            {
+              "key": "customerId",
+              "value": "{{customerId}}"
+            }
+          ]
+        },
+        "description": "Fetch all notifications for a customer."
+      }
+    },
+    {
+      "name": "Mark Notification As Read",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/{{notificationId}}/read"
+        },
+        "description": "Mark a single notification as read."
+      }
+    },
+    {
+      "name": "Mark All Notifications As Read",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/read-all?customerId={{customerId}}",
+          "query": [
+            {
+              "key": "customerId",
+              "value": "{{customerId}}"
+            }
+          ]
+        },
+        "description": "Mark all notifications for a customer as read."
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8083/api/notifications"
+    },
+    {
+      "key": "customerId",
+      "value": "101"
+    },
+    {
+      "key": "notificationId",
+      "value": "1"
+    }
+  ]
+}

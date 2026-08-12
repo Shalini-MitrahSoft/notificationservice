@@ -20,30 +20,43 @@ public class NotificationController {
 
     @PostMapping
     public ResponseEntity<NotificationResponse> createNotification(@Valid @RequestBody NotificationRequest request) {
+
         NotificationResponse response = notificationService.createNotification(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+
+
     @GetMapping("/{id}")
     public ResponseEntity<NotificationResponse> getNotification(@PathVariable Long id) {
+
         NotificationResponse response = notificationService.getNotification(id);
         return ResponseEntity.ok(response);
     }
 
+
+
     @GetMapping
     public ResponseEntity<List<NotificationResponse>> getCustomerNotifications(@RequestParam Long customerId) {
+
         List<NotificationResponse> responses = notificationService.getCustomerNotifications(customerId);
         return ResponseEntity.ok(responses);
     }
 
+
+
     @PutMapping("/{id}/read")
     public ResponseEntity<NotificationResponse> markAsRead(@PathVariable Long id) {
+
         NotificationResponse response = notificationService.markAsRead(id);
         return ResponseEntity.ok(response);
     }
 
+
+
     @PutMapping("/read-all")
     public ResponseEntity<List<NotificationResponse>> markAllAsRead(@RequestParam Long customerId) {
+
         List<NotificationResponse> responses = notificationService.markAllAsRead(customerId);
         return ResponseEntity.ok(responses);
     }
