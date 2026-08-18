@@ -25,61 +25,37 @@ public class OrderEventConsumer {
     )
     public void consumeOrderEvent(String message) {
 
-        log.info(
-                "Received order event from Kafka: {}",
-                message
-        );
+        log.info("Received order event from Kafka: {}", message);
 
         try {
-            OrderEvent event =
-                    objectMapper.readValue(
-                            message,
-                            OrderEvent.class
-                    );
+            OrderEvent event = objectMapper.readValue(message, OrderEvent.class);
 
-            NotificationRequest request =
-                    createNotificationRequest(event);
+            NotificationRequest request = createNotificationRequest(event);
 
             notificationService.createNotification(request);
 
-            log.info(
-                    "Notification created successfully: orderId={}, customerId={}, eventType={}",
-                    event.getOrderId(),
+            log.info("Notification created successfully: orderId={}, customerId={}, eventType={}", event.getOrderId(),
                     event.getCustomerId(),
                     event.getEventType()
             );
 
         } catch (JsonProcessingException exception) {
 
-            log.error(
-                    "Failed to read Kafka order event: message={}",
-                    message,
-                    exception
-            );
+            log.error("Failed to read Kafka order event: message={}", message, exception);
 
-            throw new IllegalArgumentException(
-                    "Invalid order event",
-                    exception
-            );
+            throw new IllegalArgumentException("Invalid order event", exception);
 
         } catch (Exception exception) {
 
-            log.error(
-                    "Failed to process Kafka order event: message={}",
-                    message,
-                    exception
-            );
+            log.error("Failed to process Kafka order event: message={}", message, exception);
 
             throw exception;
         }
     }
 
-    private NotificationRequest createNotificationRequest(
-            OrderEvent event
-    ) {
+    private NotificationRequest createNotificationRequest(OrderEvent event) {
 
-        NotificationRequest request =
-                new NotificationRequest();
+        NotificationRequest request = new NotificationRequest();
 
         request.setCustomerId(event.getCustomerId());
 
@@ -91,11 +67,7 @@ public class OrderEventConsumer {
 
             request.setTitle("Order confirmed");
 
-            request.setMessage(
-                    "Your order "
-                            + event.getOrderId()
-                            + " has been confirmed."
-            );
+            request.setMessage("Your order " + event.getOrderId() + " has been confirmed.");
 
         } else if ("ORDER_REJECTED".equals(
                 event.getEventType()
@@ -103,12 +75,7 @@ public class OrderEventConsumer {
 
             request.setTitle("Order rejected");
 
-            request.setMessage(
-                    "Your order "
-                            + event.getOrderId()
-                            + " was rejected. Reason: "
-                            + event.getReason()
-            );
+            request.setMessage("Your order " + event.getOrderId() + " was rejected. Reason: " + event.getReason());
 
         } else if ("ORDER_CANCELLED".equals(
                 event.getEventType()
@@ -116,21 +83,13 @@ public class OrderEventConsumer {
 
             request.setTitle("Order cancelled");
 
-            request.setMessage(
-                    "Your order "
-                            + event.getOrderId()
-                            + " has been cancelled."
-            );
+            request.setMessage("Your order " + event.getOrderId() + " has been cancelled.");
 
         } else {
 
             request.setTitle("Order status updated");
 
-            request.setMessage(
-                    "Order "
-                            + event.getOrderId()
-                            + " status changed to "
-                            + event.getStatus()
+            request.setMessage("Order " + event.getOrderId() + " status changed to " + event.getStatus()
             );
         }
 
