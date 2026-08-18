@@ -13,6 +13,8 @@ public interface NotificationService {
 
     List<NotificationResponse> getCustomerNotifications(Long customerId);
 
+    List<NotificationResponse> getAllNotifications();
+
     NotificationResponse markAsRead(Long id);
 
     List<NotificationResponse> markAllAsRead(Long customerId);

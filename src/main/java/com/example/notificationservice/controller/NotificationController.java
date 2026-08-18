@@ -43,7 +43,12 @@ public class NotificationController {
         return ResponseEntity.ok(responses);
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<NotificationResponse>> getAllNotifications() {
 
+        List<NotificationResponse> responses = notificationService.getAllNotifications();
+        return ResponseEntity.ok(responses);
+    }
 
     @PutMapping("/{id}/read")
     public ResponseEntity<NotificationResponse> markAsRead(@PathVariable Long id) {

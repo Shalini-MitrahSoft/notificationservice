@@ -63,6 +63,19 @@ public class NotificationServiceImpl implements NotificationService {
                 .toList();
     }
 
+    // Get all notifications
+    @Override
+    @Transactional(readOnly = true)
+    public List<NotificationResponse> getAllNotifications() {
+
+        List<Notification> notifications =
+                notificationRepository.findAllByOrderByCreatedAtDesc();
+
+        return notifications.stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
     // Mark one notification as read
     @Override
     @Transactional
