@@ -19,10 +19,7 @@ public class OrderEventConsumer {
 
     private final NotificationService notificationService;
 
-    @KafkaListener(
-            topics = "${app.kafka.order-topic}",
-            groupId = "${spring.kafka.consumer.group-id}"
-    )
+    @KafkaListener(topics = "${app.kafka.order-topic}", groupId = "${spring.kafka.consumer.group-id}")
     public void consumeOrderEvent(String message) {
 
         log.info("Received order event from Kafka: {}", message);

@@ -33,8 +33,7 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setMessage(request.getMessage());
         notification.setIsRead(false);
 
-        Notification savedNotification =
-                notificationRepository.save(notification);
+        Notification savedNotification = notificationRepository.save(notification);
 
         return mapToResponse(savedNotification);
     }
