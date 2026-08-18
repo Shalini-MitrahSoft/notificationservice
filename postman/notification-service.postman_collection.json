@@ -20,9 +20,7 @@
           "mode": "raw",
           "raw": "{\n  \"customerId\": 101,\n  \"orderId\": 5001,\n  \"type\": \"ORDER_PLACED\",\n  \"title\": \"Order placed successfully\",\n  \"message\": \"Your order #5001 has been placed.\"\n}"
         },
-        "url": {
-          "raw": "{{baseUrl}}"
-        },
+        "url": "{{baseUrl}}",
         "description": "Create a new notification for a customer."
       }
     },
@@ -30,9 +28,7 @@
       "name": "Get Notification By Id",
       "request": {
         "method": "GET",
-        "url": {
-          "raw": "{{baseUrl}}/{{notificationId}}"
-        },
+        "url": "{{baseUrl}}/{{notificationId}}",
         "description": "Fetch a single notification by its ID."
       }
     },
@@ -40,16 +36,16 @@
       "name": "Get Customer Notifications",
       "request": {
         "method": "GET",
-        "url": {
-          "raw": "{{baseUrl}}?customerId={{customerId}}",
-          "query": [
-            {
-              "key": "customerId",
-              "value": "{{customerId}}"
-            }
-          ]
-        },
+        "url": "{{baseUrl}}?customerId={{customerId}}",
         "description": "Fetch all notifications for a customer."
+      }
+    },
+    {
+      "name": "Get All Notifications",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/all",
+        "description": "Fetch all notifications."
       }
     },
     {
@@ -62,9 +58,7 @@
             "value": "application/json"
           }
         ],
-        "url": {
-          "raw": "{{baseUrl}}/{{notificationId}}/read"
-        },
+        "url": "{{baseUrl}}/{{notificationId}}/read",
         "description": "Mark a single notification as read."
       }
     },
@@ -78,15 +72,7 @@
             "value": "application/json"
           }
         ],
-        "url": {
-          "raw": "{{baseUrl}}/read-all?customerId={{customerId}}",
-          "query": [
-            {
-              "key": "customerId",
-              "value": "{{customerId}}"
-            }
-          ]
-        },
+        "url": "{{baseUrl}}/read-all?customerId={{customerId}}",
         "description": "Mark all notifications for a customer as read."
       }
     }
@@ -94,7 +80,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:8083/api/notifications"
+      "value": "http://localhost:8101/api/notifications"
     },
     {
       "key": "customerId",
