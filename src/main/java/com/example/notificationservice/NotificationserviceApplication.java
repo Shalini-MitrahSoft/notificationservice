@@ -11,7 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 		title = "Notification Service API",
 		version = "v1",
 		description = "Notification APIs for the Order Management System"
-), servers = @Server(url = "/", description = "Current host"))
+))
 public class NotificationserviceApplication {
 
 	public static void main(String[] args) {
