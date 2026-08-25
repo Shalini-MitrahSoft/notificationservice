@@ -6,6 +6,9 @@ import com.example.notificationservice.entity.Notification;
 import com.example.notificationservice.repository.NotificationRepository;
 import com.example.notificationservice.service.NotificationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +25,10 @@ public class NotificationServiceImpl implements NotificationService {
     // Create notification
     @Override
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "notificationList", allEntries = true),
+            @CacheEvict(cacheNames = "customerNotifications", key = "#request.customerId")
+    })
     public NotificationResponse createNotification(NotificationRequest request) {
 
         Notification notification = new Notification();
@@ -34,25 +41,24 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setIsRead(false);
 
         Notification savedNotification = notificationRepository.save(notification);
+        NotificationResponse response = mapToResponse(savedNotification);
 
-        return mapToResponse(savedNotification);
+        return response;
     }
 
     // Get one notification by ID
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "notification", key = "#id")
     public NotificationResponse getNotification(Long id) {
-
-        Notification notification = findNotification(id);
-
-        return mapToResponse(notification);
+        return mapToResponse(findNotification(id));
     }
 
     // Get all notifications for a customer
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "customerNotifications", key = "#customerId")
     public List<NotificationResponse> getCustomerNotifications(Long customerId) {
-
         List<Notification> notifications =
                 notificationRepository
                         .findByCustomerIdOrderByCreatedAtDesc(customerId);
@@ -65,8 +71,8 @@ public class NotificationServiceImpl implements NotificationService {
     // Get all notifications
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "notificationList", key = "'all'")
     public List<NotificationResponse> getAllNotifications() {
-
         List<Notification> notifications =
                 notificationRepository.findAllByOrderByCreatedAtDesc();
 
@@ -78,19 +84,30 @@ public class NotificationServiceImpl implements NotificationService {
     // Mark one notification as read
     @Override
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "notification", key = "#id"),
+            @CacheEvict(cacheNames = "notificationList", allEntries = true),
+            @CacheEvict(cacheNames = "customerNotifications", key = "#result.customerId")
+    })
     public NotificationResponse markAsRead(Long id) {
 
         Notification notification = findNotification(id);
         notification.setIsRead(true);
 
         Notification updatedNotification = notificationRepository.save(notification);
+        NotificationResponse response = mapToResponse(updatedNotification);
 
-        return mapToResponse(updatedNotification);
+        return response;
     }
 
     // Mark all customer notifications as read
     @Override
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "notification", allEntries = true),
+            @CacheEvict(cacheNames = "notificationList", allEntries = true),
+            @CacheEvict(cacheNames = "customerNotifications", key = "#customerId")
+    })
     public List<NotificationResponse> markAllAsRead(Long customerId) {
 
         List<Notification> notifications = notificationRepository.findByCustomerIdOrderByCreatedAtDesc(customerId);
@@ -98,10 +115,11 @@ public class NotificationServiceImpl implements NotificationService {
         notifications.forEach(notification -> notification.setIsRead(true));
 
         List<Notification> updatedNotifications = notificationRepository.saveAll(notifications);
-
-        return updatedNotifications.stream()
+        List<NotificationResponse> response = updatedNotifications.stream()
                 .map(this::mapToResponse)
                 .toList();
+
+        return response;
     }
 
     // Find notification or throw 404 error
@@ -130,4 +148,5 @@ public class NotificationServiceImpl implements NotificationService {
                 .createdAt(notification.getCreatedAt())
                 .build();
     }
+
 }
